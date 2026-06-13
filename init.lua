@@ -52,7 +52,7 @@ vim.opt.incsearch = true
 -------------
 vim.opt.updatetime = 50
 
-vim.opt.rtp:prepend(vim.fn.expand("<sfile>:p:h"))
+-- vim.opt.rtp:prepend(vim.fn.expand("<sfile>:p:h"))
 vim.cmd.colorscheme("mycolorscheme")
 
 for _, f in ipairs(vim.api.nvim_get_runtime_file("plugins/*.lua", true)) do

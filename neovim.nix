@@ -20,6 +20,10 @@
   vimPlugins,
   lib,
 }: let
+  # Copies the entire config directory into the nix store so the wrapper
+  # can reference init.lua (and the plugins/ next to it) by absolute path.
+  configSrc = ./.;
+
   # Arbitrary label for the Neovim package directory. Neovim's native
   # package system (:h packages) expects the layout
   #   <packpath>/pack/<name>/{start,opt}/<plugin>
@@ -150,7 +154,7 @@ in
     postBuild = ''
       wrapProgram $out/bin/nvim \
         --add-flags '-u' \
-        --add-flags './init.lua' \
+        --add-flags '${configSrc}/init.lua' \
         --add-flags '--cmd' \
         --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath}'" \
         --set-default NVIM_APPNAME nvim-shnzhn
