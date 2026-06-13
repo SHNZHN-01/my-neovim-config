@@ -19,10 +19,10 @@
   # The nixpkgs vim/neovim plugin set.
   vimPlugins,
   lib,
+  # The flake's own source tree (inputs.self), passed in from flake.nix so
+  # the wrapper can reference init.lua by its absolute nix store path.
+  src,
 }: let
-  # Copies the entire config directory into the nix store so the wrapper
-  # can reference init.lua (and the plugins/ next to it) by absolute path.
-  configSrc = ./.;
 
   # Arbitrary label for the Neovim package directory. Neovim's native
   # package system (:h packages) expects the layout
@@ -60,9 +60,7 @@
     vimPlugins.nvim-lspconfig
     vimPlugins.lualine-nvim
     vimPlugins.luasnip
-    #missing mapper
     vimPlugins.markdown-preview-nvim
-    #mason maybe not needed
     vimPlugins.nabla-nvim
     vimPlugins.neogen
     vimPlugins.no-neck-pain-nvim
@@ -154,7 +152,7 @@ in
     postBuild = ''
       wrapProgram $out/bin/nvim \
         --add-flags '-u' \
-        --add-flags '${configSrc}/init.lua' \
+        --add-flags '${src}/init.lua' \
         --add-flags '--cmd' \
         --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath}'" \
         --set-default NVIM_APPNAME nvim-shnzhn
