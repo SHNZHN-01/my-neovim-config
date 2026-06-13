@@ -56,7 +56,7 @@
           # The empty {} is the override set — consumers can do
           #   neovim-shnzhn.override { neovim-unwrapped = ...; }
           # later thanks to callPackage's makeOverridable wrapping.
-          neovim-shnzhn = pkgs.callPackage ./neovim.nix { src = inputs.self; };
+          neovim-shnzhn = pkgs.callPackage ./neovim.nix {};
 
           # `nix run <this-flake>` / `nix build <this-flake>` with no
           # attribute path resolves to `default`.
@@ -78,7 +78,7 @@
         # up the fully-overlaid package set — e.g. if the consumer also
         # overlays neovim-unwrapped, we build against their version.
         overlays.default = final: _prev: {
-          neovim-shnzhn = final.callPackage ./neovim.nix { src = inputs.self; };
+          neovim-shnzhn = final.callPackage ./neovim.nix {};
         };
 
         # Convenience NixOS module. Importing it:

@@ -23,6 +23,10 @@
   # the wrapper can reference init.lua by its absolute nix store path.
   src,
 }: let
+  # builtins.path copies the config directory into the nix store and returns
+  # its absolute store path. This is evaluated at nix evaluation time, so
+  # the wrapper ends up with a literal /nix/store/… path, not a relative one.
+  configSrc = builtins.path { name = "neovim-config"; path = ./.; };
 
   # Arbitrary label for the Neovim package directory. Neovim's native
   # package system (:h packages) expects the layout
