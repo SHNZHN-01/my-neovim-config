@@ -57,9 +57,7 @@
     vimPlugins.nvim-lspconfig
     vimPlugins.lualine-nvim
     vimPlugins.luasnip
-    #missing mapper
     vimPlugins.markdown-preview-nvim
-    #mason maybe not needed
     vimPlugins.nabla-nvim
     vimPlugins.neogen
     vimPlugins.no-neck-pain-nvim
@@ -153,7 +151,7 @@ in
         --add-flags '-u' \
         --add-flags '${src}/init.lua' \
         --add-flags '--cmd' \
-        --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath}'" \
+        --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath},${src}'" \
         --set-default NVIM_APPNAME nvim-shnzhn
     '';
 
