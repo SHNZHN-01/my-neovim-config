@@ -19,12 +19,8 @@
   # The nixpkgs vim/neovim plugin set.
   vimPlugins,
   lib,
+  src,
 }: let
-  # builtins.path copies the config directory into the nix store and returns
-  # its absolute store path. This is evaluated at nix evaluation time, so
-  # the wrapper ends up with a literal /nix/store/… path, not a relative one.
-  configSrc = builtins.path { name = "neovim-config"; path = ./.; };
-
   # Arbitrary label for the Neovim package directory. Neovim's native
   # package system (:h packages) expects the layout
   #   <packpath>/pack/<name>/{start,opt}/<plugin>
@@ -61,7 +57,9 @@
     vimPlugins.nvim-lspconfig
     vimPlugins.lualine-nvim
     vimPlugins.luasnip
+    #missing mapper
     vimPlugins.markdown-preview-nvim
+    #mason maybe not needed
     vimPlugins.nabla-nvim
     vimPlugins.neogen
     vimPlugins.no-neck-pain-nvim
@@ -153,7 +151,7 @@ in
     postBuild = ''
       wrapProgram $out/bin/nvim \
         --add-flags '-u' \
-        --add-flags '${configSrc}/init.lua' \
+        --add-flags '${src}/init.lua' \
         --add-flags '--cmd' \
         --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath}'" \
         --set-default NVIM_APPNAME nvim-shnzhn
