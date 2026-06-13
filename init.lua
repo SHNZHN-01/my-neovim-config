@@ -55,15 +55,9 @@ vim.opt.updatetime = 50
 vim.opt.rtp:prepend(vim.fn.expand("<sfile>:p:h"))
 vim.cmd.colorscheme("mycolorscheme")
 
-for _, f in ipairs(vim.api.nvim_get_runtime_file("plugins/*.lua", true)) do
-    dofile(f)
+for _, f in ipairs(vim.api.nvim_get_runtime_file("lua/plugins/*.lua", true)) do
+    local name = f:match("([^/\\]+)%.lua$")
+    if name then require("plugins." .. name) end
 end
-
--- for _, f in ipairs(vim.api.nvim_get_runtime_file("plugins/*.lua", true)) do
---     local name = f:match("([^/\\]+)%.lua$")
---     if name then
---         require("plugins." .. name)
---     end
--- end
 
 require("no-neck-pain").enable()
