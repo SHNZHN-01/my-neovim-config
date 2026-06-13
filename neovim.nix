@@ -19,9 +19,6 @@
   # The nixpkgs vim/neovim plugin set.
   vimPlugins,
   lib,
-  # The flake's own source tree (inputs.self), passed in from flake.nix so
-  # the wrapper can reference init.lua by its absolute nix store path.
-  src,
 }: let
   # builtins.path copies the config directory into the nix store and returns
   # its absolute store path. This is evaluated at nix evaluation time, so
@@ -156,7 +153,7 @@ in
     postBuild = ''
       wrapProgram $out/bin/nvim \
         --add-flags '-u' \
-        --add-flags '${src}/init.lua' \
+        --add-flags '${configSrc}/init.lua' \
         --add-flags '--cmd' \
         --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath}'" \
         --set-default NVIM_APPNAME nvim-shnzhn
