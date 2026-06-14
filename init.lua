@@ -48,6 +48,10 @@ vim.opt.backup = false
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
+-- Clipbarod
+-----------------
+vim.opt.clipboard = "unnamedplus"
+
 -- Performance
 -------------
 vim.opt.updatetime = 50
