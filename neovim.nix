@@ -41,6 +41,15 @@
     vimPlugins.nvim-autopairs
     vimPlugins.nvim-ts-autotag
     vimPlugins.nvim-cmp
+
+    vimPlugins.cmp-nvim-lsp
+    vimPlugins.cmp-nvim-lsp-signature-help
+    vimPlugins.cmp-buffer
+    vimPlugins.cmp-path
+    vimPlugins.cmp-nvim-lua
+    vimPlugins.cmp_luasnip          # note the underscore
+    vimPlugins.cmp-cmdline
+
     vimPlugins.nvim-dap
     vimPlugins.nvim-dap-go
     vimPlugins.nvim-dap-python
