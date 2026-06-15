@@ -48,7 +48,7 @@ vim.opt.backup = false
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
--- Clipbarod
+-- Clipboard
 -----------------
 vim.opt.clipboard = "unnamedplus"
 

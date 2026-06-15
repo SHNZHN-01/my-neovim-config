@@ -20,12 +20,23 @@
   vimPlugins,
   lib,
   src,
+  # Lua
+  lua-language-server,
+  stylua,
+  selene,
 }: let
   # Arbitrary label for the Neovim package directory. Neovim's native
   # package system (:h packages) expects the layout
   #   <packpath>/pack/<name>/{start,opt}/<plugin>
   # where <name> is purely cosmetic.
   packageName = "neovim-shnzhn";
+
+  runtimeDeps = [
+    # Lua
+    lua-language-server
+    stylua
+    selene
+  ];
 
   # The plugins you actually ask for. Anything under pack/*/start/ is
   # loaded automatically at startup (vs opt/, which needs :packadd).
@@ -41,7 +52,6 @@
     vimPlugins.nvim-autopairs
     vimPlugins.nvim-ts-autotag
     vimPlugins.nvim-cmp
-
     vimPlugins.cmp-nvim-lsp
     vimPlugins.cmp-nvim-lsp-signature-help
     vimPlugins.cmp-buffer
@@ -49,7 +59,6 @@
     vimPlugins.cmp-nvim-lua
     vimPlugins.cmp_luasnip          # note the underscore
     vimPlugins.cmp-cmdline
-
     vimPlugins.nvim-dap
     vimPlugins.nvim-dap-go
     vimPlugins.nvim-dap-python
@@ -161,6 +170,7 @@ in
         --add-flags '${src}/init.lua' \
         --add-flags '--cmd' \
         --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath},${src}'" \
+        --prefix PATH : ${lib.makeBinPath runtimeDeps} \
         --set-default NVIM_APPNAME nvim-shnzhn
     '';
 
