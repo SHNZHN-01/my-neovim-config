@@ -21,9 +21,9 @@
   lib,
   src,
   # Lua
-  lua-language-server,
-  stylua,
-  selene,
+  lua-language-server, stylua, selene,
+  # Nix
+  nixd, nixfmt-rfc-style, statix, deadnix,
 }: let
   # Arbitrary label for the Neovim package directory. Neovim's native
   # package system (:h packages) expects the layout
@@ -32,10 +32,10 @@
   packageName = "neovim-shnzhn";
 
   runtimeDeps = [
-    # Lua
-    lua-language-server
-    stylua
-    selene
+    # Lua 
+    lua-language-server stylua selene
+    # Nix
+    nixd nixfmt-rfc-style statix deadnix
   ];
 
   # The plugins you actually ask for. Anything under pack/*/start/ is

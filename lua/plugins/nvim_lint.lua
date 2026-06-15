@@ -1,7 +1,8 @@
 local lint = require("lint")
 
 lint.linters_by_ft = {
-  lua        = { "selene" },        -- style lint; lua_ls already gives semantic diags
+  lua        = { "selene" },
+  nix        = { "statix", "deadnix" },
   -- python     = { "ruff" },          -- `ruff check`, distinct from ruff_format above
   -- javascript = { "eslint_d" },
   -- typescript = { "eslint_d" },
