@@ -1,3 +1,3 @@
 require("gitsigns").setup({
-    signcolumn = false,
+	signcolumn = false,
 })

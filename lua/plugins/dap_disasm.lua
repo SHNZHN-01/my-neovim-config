@@ -1,1 +1,1 @@
-require('dap-disasm').setup({})
+require("dap-disasm").setup({})

@@ -1,3 +1,3 @@
-require('image').setup({
-    processor = "magick_cli",
+require("image").setup({
+	processor = "magick_cli",
 })

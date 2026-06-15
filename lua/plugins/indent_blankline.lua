@@ -1,5 +1,5 @@
 require("ibl").setup({
-    exclude = {
-        filetypes = { "NvimTree" },
-    }
+	exclude = {
+		filetypes = { "NvimTree" },
+	},
 })

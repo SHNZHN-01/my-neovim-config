@@ -13,7 +13,7 @@ vim.g.loaded_netrwPlugin = 1
 -- vim.opt.cmdheight = 0
 -- Set cursor to block
 vim.opt.guicursor = ""
--- Show sign column yes or no 
+-- Show sign column yes or no
 vim.opt.signcolumn = "auto:2"
 -- Show line numbers
 vim.opt.nu = true
@@ -32,10 +32,10 @@ vim.opt.termguicolors = true
 -- Editor behavior
 -----------------
 -- Tab settings
-vim.opt.tabstop = 4         -- Number of spaces a tab counts for
-vim.opt.softtabstop = 4     -- Number of spaces inserted when pressing tab
-vim.opt.shiftwidth = 4      -- Number of spaces for indentation
-vim.opt.expandtab = true    -- Convert tabs to spaces
+vim.opt.tabstop = 4 -- Number of spaces a tab counts for
+vim.opt.softtabstop = 4 -- Number of spaces inserted when pressing tab
+vim.opt.shiftwidth = 4 -- Number of spaces for indentation
+vim.opt.expandtab = true -- Convert tabs to spaces
 vim.opt.smartindent = false -- Smart autoindentation
 
 -- File handling
@@ -60,8 +60,10 @@ vim.opt.rtp:prepend(vim.fn.expand("<sfile>:p:h"))
 vim.cmd.colorscheme("mycolorscheme")
 
 for _, f in ipairs(vim.api.nvim_get_runtime_file("lua/plugins/*.lua", true)) do
-    local name = f:match("([^/\\]+)%.lua$")
-    if name then require("plugins." .. name) end
+	local name = f:match("([^/\\]+)%.lua$")
+	if name then
+		require("plugins." .. name)
+	end
 end
 
 require("no-neck-pain").enable()

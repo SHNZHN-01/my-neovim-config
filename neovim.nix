@@ -21,10 +21,16 @@
   lib,
   src,
   # Lua
-  lua-language-server, stylua, selene,
+  lua-language-server,
+  stylua,
+  selene,
   # Nix
-  nixd, nixfmt-rfc-style, statix, deadnix,
-}: let
+  nixd,
+  nixfmt-rfc-style,
+  statix,
+  deadnix,
+}:
+let
   # Arbitrary label for the Neovim package directory. Neovim's native
   # package system (:h packages) expects the layout
   #   <packpath>/pack/<name>/{start,opt}/<plugin>
@@ -32,10 +38,15 @@
   packageName = "neovim-shnzhn";
 
   runtimeDeps = [
-    # Lua 
-    lua-language-server stylua selene
+    # Lua
+    lua-language-server
+    stylua
+    selene
     # Nix
-    nixd nixfmt-rfc-style statix deadnix
+    nixd
+    nixfmt-rfc-style
+    statix
+    deadnix
   ];
 
   # The plugins you actually ask for. Anything under pack/*/start/ is
@@ -57,7 +68,7 @@
     vimPlugins.cmp-buffer
     vimPlugins.cmp-path
     vimPlugins.cmp-nvim-lua
-    vimPlugins.cmp_luasnip          # note the underscore
+    vimPlugins.cmp_luasnip # note the underscore
     vimPlugins.cmp-cmdline
     vimPlugins.nvim-dap
     vimPlugins.nvim-dap-go
@@ -105,12 +116,12 @@
   # lib.unique below rather than a visited-set during the fold.
   foldPlugins = builtins.foldl' (
     acc: next:
-      acc
-      ++ [
-        next
-      ]
-      ++ (foldPlugins (next.dependencies or []))
-  ) [];
+    acc
+    ++ [
+      next
+    ]
+    ++ (foldPlugins (next.dependencies or [ ]))
+  ) [ ];
 
   # The deduplicated transitive closure of startPlugins.
   startPluginsWithDeps = lib.unique (foldPlugins startPlugins);
@@ -127,59 +138,56 @@
   #     name (telescope.nvim, not telescope.nvim-2024-xx-xx)
   #   * ln flags: -v verbose, -s symbolic, -f force,
   #     -T treat dest as the link itself (never descend into a dir)
-  packpath = runCommandLocal "packpath" {} ''
+  packpath = runCommandLocal "packpath" { } ''
     mkdir -p $out/pack/${packageName}/{start,opt}
 
-    ${
-      lib.concatMapStringsSep
-      "\n"
-      (plugin: "ln -vsfT ${plugin} $out/pack/${packageName}/start/${lib.getName plugin}")
-      startPluginsWithDeps
-    }
+    ${lib.concatMapStringsSep "\n" (
+      plugin: "ln -vsfT ${plugin} $out/pack/${packageName}/start/${lib.getName plugin}"
+    ) startPluginsWithDeps}
   '';
 in
-  # symlinkJoin over a single path is effectively a cheap "copy" of
-  # neovim-unwrapped that we're allowed to mutate in postBuild.
-  symlinkJoin {
-    name = "neovim-shnzhn";
-    paths = [neovim-unwrapped];
-    meta.mainProgram = "nvim";
-    # Build-time-only dependency providing `wrapProgram`.
-    nativeBuildInputs = [makeWrapper];
+# symlinkJoin over a single path is effectively a cheap "copy" of
+# neovim-unwrapped that we're allowed to mutate in postBuild.
+symlinkJoin {
+  name = "neovim-shnzhn";
+  paths = [ neovim-unwrapped ];
+  meta.mainProgram = "nvim";
+  # Build-time-only dependency providing `wrapProgram`.
+  nativeBuildInputs = [ makeWrapper ];
 
-    # wrapProgram moves the real binary to .nvim-wrapped and drops in a
-    # shell script that injects flags before any user-supplied args:
-    #
-    #   -u <store-path-to-init.lua>
-    #       Use OUR init file instead of ~/.config/nvim/init.lua.
-    #       ${./init.lua} copies the file sitting next to this .nix file
-    #       into the store and bakes the resulting path in — this is what
-    #       makes the config reproducible.
-    #
-    #   --cmd 'set packpath^=... | set runtimepath^=...'
-    #       --cmd runs an Ex command BEFORE any config is sourced.
-    #       ^= prepends, so our generated packpath wins in both plugin
-    #       discovery (packpath) and runtime file lookup (runtimepath).
-    #       The nested "'...'" quoting keeps the |-containing command a
-    #       single shell word inside the wrapper script.
-    #
-    #   NVIM_APPNAME=nvim-shnzhn (default only — user can still override)
-    #       Isolates state/cache/data dirs (~/.local/share/nvim-shnzhn,
-    #       ~/.local/state/nvim-shnzhn, ...) from any stock nvim install.
-    postBuild = ''
-      wrapProgram $out/bin/nvim \
-        --add-flags '-u' \
-        --add-flags '${src}/init.lua' \
-        --add-flags '--cmd' \
-        --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath},${src}'" \
-        --prefix PATH : ${lib.makeBinPath runtimeDeps} \
-        --set-default NVIM_APPNAME nvim-shnzhn
-    '';
+  # wrapProgram moves the real binary to .nvim-wrapped and drops in a
+  # shell script that injects flags before any user-supplied args:
+  #
+  #   -u <store-path-to-init.lua>
+  #       Use OUR init file instead of ~/.config/nvim/init.lua.
+  #       ${./init.lua} copies the file sitting next to this .nix file
+  #       into the store and bakes the resulting path in — this is what
+  #       makes the config reproducible.
+  #
+  #   --cmd 'set packpath^=... | set runtimepath^=...'
+  #       --cmd runs an Ex command BEFORE any config is sourced.
+  #       ^= prepends, so our generated packpath wins in both plugin
+  #       discovery (packpath) and runtime file lookup (runtimepath).
+  #       The nested "'...'" quoting keeps the |-containing command a
+  #       single shell word inside the wrapper script.
+  #
+  #   NVIM_APPNAME=nvim-shnzhn (default only — user can still override)
+  #       Isolates state/cache/data dirs (~/.local/share/nvim-shnzhn,
+  #       ~/.local/state/nvim-shnzhn, ...) from any stock nvim install.
+  postBuild = ''
+    wrapProgram $out/bin/nvim \
+      --add-flags '-u' \
+      --add-flags '${src}/init.lua' \
+      --add-flags '--cmd' \
+      --add-flags "'set packpath^=${packpath} | set runtimepath^=${packpath},${src}'" \
+      --prefix PATH : ${lib.makeBinPath runtimeDeps} \
+      --set-default NVIM_APPNAME nvim-shnzhn
+  '';
 
-    # Expose the packpath derivation on the final package without
-    # affecting the build. Handy for inspection:
-    #   nix build .#neovim-shnzhn.packpath && ls -l result/pack/*/start
-    passthru = {
-      inherit packpath;
-    };
-  }
+  # Expose the packpath derivation on the final package without
+  # affecting the build. Handy for inspection:
+  #   nix build .#neovim-shnzhn.packpath && ls -l result/pack/*/start
+  passthru = {
+    inherit packpath;
+  };
+}
