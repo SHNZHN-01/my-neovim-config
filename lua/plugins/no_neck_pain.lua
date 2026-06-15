@@ -1,1 +1,3 @@
-require('no-neck-pain').setup({})
+require('no-neck-pain').setup({
+    width = 125,
+})
