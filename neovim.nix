@@ -1,22 +1,8 @@
-# neovim.nix
-#
-# A callPackage-style function that produces a fully self-contained Neovim:
-#   stock nvim binary + store-pinned init.lua + plugin packpath, all hermetic.
-#
-# It deliberately does NOT use wrapNeovim/neovimUtils from nixpkgs — it
-# re-implements the minimal subset (packpath construction + wrapper) so the
-# whole mechanism stays visible and hackable.
 {
-  # Builder that merges store paths into one output via symlinks.
   symlinkJoin,
-  # Neovim without any nixpkgs wrapper magic applied.
   neovim-unwrapped,
-  # Provides the `wrapProgram` shell function used in postBuild.
   makeWrapper,
-  # Like runCommand, but forces a local build (no remote builders /
-  # substitution) — appropriate for trivial symlink shuffling.
   runCommandLocal,
-  # The nixpkgs vim/neovim plugin set.
   vimPlugins,
   lib,
   src,
@@ -31,10 +17,6 @@
   deadnix,
 }:
 let
-  # Arbitrary label for the Neovim package directory. Neovim's native
-  # package system (:h packages) expects the layout
-  #   <packpath>/pack/<name>/{start,opt}/<plugin>
-  # where <name> is purely cosmetic.
   packageName = "neovim-shnzhn";
 
   runtimeDeps = [
@@ -49,12 +31,6 @@ let
     deadnix
   ];
 
-  # The plugins you actually ask for. Anything under pack/*/start/ is
-  # loaded automatically at startup (vs opt/, which needs :packadd).
-  #
-  # Not all plugins that are here require are matched with a .lua
-  # file on the "plugins" folder. The only ones that have a matching
-  # .lua file are the one that must have a "setup" call or some options set
   startPlugins = [
     vimPlugins.telescope-nvim
     vimPlugins.nvim-treesitter-textobjects
@@ -68,7 +44,7 @@ let
     vimPlugins.cmp-buffer
     vimPlugins.cmp-path
     vimPlugins.cmp-nvim-lua
-    vimPlugins.cmp_luasnip # note the underscore
+    vimPlugins.cmp_luasnip
     vimPlugins.cmp-cmdline
     vimPlugins.nvim-dap
     vimPlugins.nvim-dap-go
@@ -101,19 +77,6 @@ let
     vimPlugins.nvim-lint
   ];
 
-  # Transitive-dependency flattener.
-  #
-  # `builtins.foldl' f init` is given only two of its three arguments, so
-  # foldPlugins is itself a function: list-of-plugins -> flat-list.
-  #
-  # For each plugin `next` it appends:
-  #   * the plugin itself, and
-  #   * the recursive flattening of `next.dependencies`
-  #     (`or []` covers plugins that don't declare any).
-  #
-  # Caveats (fine in practice): no cycle detection (plugin deps form a
-  # DAG in nixpkgs), and shared deps appear multiple times — handled by
-  # lib.unique below rather than a visited-set during the fold.
   foldPlugins = builtins.foldl' (
     acc: next:
     acc
@@ -123,7 +86,6 @@ let
     ++ (foldPlugins (next.dependencies or [ ]))
   ) [ ];
 
-  # The deduplicated transitive closure of startPlugins.
   startPluginsWithDeps = lib.unique (foldPlugins startPlugins);
 
   # A derivation whose output is a valid Neovim packpath:
@@ -146,8 +108,6 @@ let
     ) startPluginsWithDeps}
   '';
 in
-# symlinkJoin over a single path is effectively a cheap "copy" of
-# neovim-unwrapped that we're allowed to mutate in postBuild.
 symlinkJoin {
   name = "neovim-shnzhn";
   paths = [ neovim-unwrapped ];
@@ -157,23 +117,6 @@ symlinkJoin {
 
   # wrapProgram moves the real binary to .nvim-wrapped and drops in a
   # shell script that injects flags before any user-supplied args:
-  #
-  #   -u <store-path-to-init.lua>
-  #       Use OUR init file instead of ~/.config/nvim/init.lua.
-  #       ${./init.lua} copies the file sitting next to this .nix file
-  #       into the store and bakes the resulting path in — this is what
-  #       makes the config reproducible.
-  #
-  #   --cmd 'set packpath^=... | set runtimepath^=...'
-  #       --cmd runs an Ex command BEFORE any config is sourced.
-  #       ^= prepends, so our generated packpath wins in both plugin
-  #       discovery (packpath) and runtime file lookup (runtimepath).
-  #       The nested "'...'" quoting keeps the |-containing command a
-  #       single shell word inside the wrapper script.
-  #
-  #   NVIM_APPNAME=nvim-shnzhn (default only — user can still override)
-  #       Isolates state/cache/data dirs (~/.local/share/nvim-shnzhn,
-  #       ~/.local/state/nvim-shnzhn, ...) from any stock nvim install.
   postBuild = ''
     wrapProgram $out/bin/nvim \
       --add-flags '-u' \
