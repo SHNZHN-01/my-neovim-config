@@ -1,5 +1,6 @@
 require("options")
 require("appearance")
+require("keymaps")
 
 for _, f in ipairs(vim.api.nvim_get_runtime_file("lua/plugins/*.lua", true)) do
 	local name = f:match("([^/\\]+)%.lua$")
