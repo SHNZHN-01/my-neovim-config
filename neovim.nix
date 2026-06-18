@@ -12,7 +12,7 @@
   selene,
   # Nix
   nixd,
-  nixfmt-rfc-style,
+  nixfmt,
   statix,
   deadnix,
 }:
@@ -26,7 +26,7 @@ let
     selene
     # Nix
     nixd
-    nixfmt-rfc-style
+    nixfmt
     statix
     deadnix
   ];
