@@ -10,6 +10,7 @@ telescope.setup({
 			dynamic_preview_title = false,
 			hijack_netrw = true,
 		},
+		fzf = {},
 	},
 	defaults = {
 		initial_mode = "normal",
@@ -102,3 +103,4 @@ telescope.setup({
 })
 
 telescope.load_extension("file_browser")
+telescope.load_extension("fzf")

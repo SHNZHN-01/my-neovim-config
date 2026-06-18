@@ -33,6 +33,7 @@ let
 
   startPlugins = [
     vimPlugins.telescope-nvim
+    vimPlugins.telescope-fzf-native-nvim
     vimPlugins.nvim-treesitter-textobjects
     vimPlugins.plenary-nvim
     vimPlugins.nvim-treesitter.withAllGrammars
