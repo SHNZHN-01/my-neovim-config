@@ -76,6 +76,7 @@ let
     vimPlugins.which-key-nvim
     vimPlugins.conform-nvim
     vimPlugins.nvim-lint
+    vimPlugins.opencode-nvim
   ];
 
   foldPlugins = builtins.foldl' (

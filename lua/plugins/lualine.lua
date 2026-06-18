@@ -11,5 +11,13 @@ require("lualine").setup({
 			"NvimTree",
 		},
 		globalstatus = true,
+		sections = {
+			lualine_z = {
+				{
+					-- Shows the currently connected server and its status
+					require("opencode").statusline,
+				},
+			},
+		},
 	},
 })
