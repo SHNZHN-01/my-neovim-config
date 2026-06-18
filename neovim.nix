@@ -73,7 +73,6 @@ let
     vimPlugins.nvim-surround
     vimPlugins.telescope-file-browser-nvim
     vimPlugins.trouble-nvim
-    vimPlugins.which-key-nvim
     vimPlugins.conform-nvim
     vimPlugins.nvim-lint
     vimPlugins.opencode-nvim

@@ -1,33 +1,8 @@
 local cmp = require("cmp")
-local cmp_select = { behavior = cmp.SelectBehavior.Select }
-local cmp_mappings = cmp.mapping.preset.insert({
-	["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
-	["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
-	["<C-c>"] = cmp.mapping.confirm({
-		behavior = cmp.ConfirmBehavior.Insert,
-		select = true,
-	}),
-	-- ['<C-c>'] = cmp.mapping.complete(),
-	-- check completion only with snippets
-	["<C-s>"] = cmp.mapping.complete({
-		config = {
-			sources = {
-				{ name = "luasnip" },
-			},
-		},
-	}),
-	["<C-g>"] = function()
-		if cmp.visible_docs() then
-			cmp.close_docs()
-		else
-			cmp.open_docs()
-		end
-	end,
-})
 
 cmp.setup({
-	select_behavior = cmp_select,
-	mapping = cmp_mappings,
+	select_behavior = cmp.SelectBehavior.Select,
+	mapping = cmp.mapping.preset.insert({}),
 	view = {
 		-- disable docs from opening automatically when selecting an item
 		docs = {
